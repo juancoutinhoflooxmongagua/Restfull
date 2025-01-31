@@ -14,4 +14,7 @@ module.exports = (app) => {
             users: ['juan', 'carlos']
         });
     });
-};
+
+    app.post('/users/admin', (req, res) => {       
+            res.json(req.body)
+        })};
