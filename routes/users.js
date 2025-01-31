@@ -6,37 +6,55 @@ let db = new NeDB({
 });
 
 module.exports = (app) => {
-    app.get('/users', (req, res) => { 
-        db.find({}).sort({ name: 1 }).exec((err, users) => {
-            if (err) {
-                console.log(`Error: ${err}`);
-                res.status(400).json({
-                    error: err
-                });
-            } else {
-                res.status(200).json({
-                    users: users
-                });
-            }
+    app.route('/users')
+        .get((req, res) => { 
+            db.find({}).sort({ name: 1 }).exec((err, users) => {
+                if (err) {
+                    if (app.utils && app.utils.error && typeof app.utils.error.send === 'function') {
+                        app.utils.error.send(err, req, res);
+                    } else {
+                        res.status(400).json({ error: err });
+                    }
+                } else {
+                    res.status(200).json({
+                        users: users
+                    });
+                }
+            });
+        })
+        .post((req, res) => {
+            db.insert(req.body, (err, user) => {
+                if (err) {
+                    console.log(`Error: ${err}`);
+                    if (app.utils && app.utils.error && typeof app.utils.error.send === 'function') {
+                        app.utils.error.send(err, req, res);
+                    } else {
+                        res.status(400).json({ error: err });
+                    }
+                } else {
+                    res.status(200).json(user);
+                }
+            });
         });
-    });
 
-    app.get('/users/admin', (req, res) => { 
-        res.status(200).json({
-            users: ['juan', 'carlos']
+    app.route('/users/admin')
+        .get((req, res) => { 
+            res.status(200).json({
+                users: ['juan', 'carlos']
+            });
+        })
+        .post((req, res) => {       
+            db.insert(req.body, (err, user) => {
+                if (err) {
+                    console.log(`Error: ${err}`);
+                    if (app.utils && app.utils.error && typeof app.utils.error.send === 'function') {
+                        app.utils.error.send(err, req, res);
+                    } else {
+                        res.status(400).json({ error: err });
+                    }
+                } else {
+                    res.status(200).json(user);
+                }
+            });    
         });
-    });
-
-    app.post('/users/admin', (req, res) => {       
-        db.insert(req.body, (err, user) => {
-            if (err) {
-                console.log(`Error: ${err}`);
-                res.status(400).json({
-                    error: err
-                });
-            } else {
-                res.status(200).json(user);
-            }
-        });    
-    });
 };
