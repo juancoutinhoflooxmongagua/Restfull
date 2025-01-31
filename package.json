@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/juancoutinhoflooxmongagua/Restfull/issues"
   },
-  "homepage": "https://github.com/juancoutinhoflooxmongagua/Restfull#readme"
+  "homepage": "https://github.com/juancoutinhoflooxmongagua/Restfull#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
 }
