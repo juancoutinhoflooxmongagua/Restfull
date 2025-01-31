@@ -7,12 +7,17 @@ let db = new NeDB({
 
 module.exports = (app) => {
     app.get('/users', (req, res) => { 
-        res.status(200).json({ 
-            users: [{ 
-                name: 'juan',
-                email: 'contato@getHeapCodeStatistics.com.br',
-                id: 1
-            }]
+        db.find({}).sort({ name: 1 }).exec((err, users) => {
+            if (err) {
+                console.log(`Error: ${err}`);
+                res.status(400).json({
+                    error: err
+                });
+            } else {
+                res.status(200).json({
+                    users: users
+                });
+            }
         });
     });
 
