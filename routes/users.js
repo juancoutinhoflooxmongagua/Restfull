@@ -1,16 +1,16 @@
 let NeDB = require('nedb');
 let db = new NeDB({
-    filename: 'users.db',
-    autoload: true
+    filename:'users.db',
+    autoload:true
 });
 
-module.exports = (app) => {
+module.exports = app => {
 
     let route = app.route('/users');
 
     route.get((req, res) => {
 
-        db.find({}).sort({ name: 1 }).exec((err, users) => {
+        db.find({}).sort({name:1}).exec((err, users)=>{
 
             if (err) {
                 app.utils.error.send(err, req, res);
@@ -21,7 +21,7 @@ module.exports = (app) => {
                 res.json({
                     users
                 });
-                
+
             }
 
         });
@@ -29,16 +29,15 @@ module.exports = (app) => {
     });
 
     route.post((req, res) => {
-
-        body('name').notEmpty().withMessage('O nome é obrigatório.'),
-        body('email').isEmail().withMessage('O email é inválido.'),
-
-        db.insert(req.body, (err, user) => {
+        
+        if (!app.utils.validator.user(app, req, res)) return false;
+        
+        db.insert(req.body, (err, user)=>{
 
             if (err) {
                 app.utils.error.send(err, req, res);
             } else {
-                
+
                 res.status(200).json(user);
 
             }
@@ -51,7 +50,7 @@ module.exports = (app) => {
 
     routeId.get((req, res) => {
 
-        db.findOne({ _id: req.params.id }).exec((err, user) => {
+        db.findOne({_id:req.params.id}).exec((err, user)=>{
 
             if (err) {
                 app.utils.error.send(err, req, res);
@@ -64,8 +63,8 @@ module.exports = (app) => {
     });
 
     routeId.put((req, res) => {
-
-        console.log(req.body);
+        
+        if (!app.utils.validator.user(app, req, res)) return false;
 
         db.update({ _id: req.params.id }, req.body, err => {
 
@@ -78,10 +77,10 @@ module.exports = (app) => {
         });
 
     });
+    
+    routeId.delete((req, res)=>{
 
-    routeId.delete((req, res) => {
-
-        db.remove({ _id: req.params.id }, {}, err => {
+        db.remove({ _id: req.params.id }, {}, err=>{
 
             if (err) {
                 app.utils.error.send(err, req, res);
