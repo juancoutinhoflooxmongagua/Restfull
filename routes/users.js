@@ -30,6 +30,9 @@ module.exports = (app) => {
 
     route.post((req, res) => {
 
+        body('name').notEmpty().withMessage('O nome é obrigatório.'),
+        body('email').isEmail().withMessage('O email é inválido.'),
+
         db.insert(req.body, (err, user) => {
 
             if (err) {
