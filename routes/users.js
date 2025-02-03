@@ -1,3 +1,4 @@
+const { request } = require('express');
 let NeDB = require('nedb');
 
 let db = new NeDB({
@@ -57,4 +58,22 @@ module.exports = (app) => {
                 }
             });    
         });
+
+        let routeId = app.route('/users/:id');
+
+        routeId.get((req, res) => {
+            db.findOne({_id: req.params.id}).exec((err, user) => {  // Aqui usei req.params.id
+                if (err) {
+                    console.log(`Error: ${err}`);
+                    if (app.utils && app.utils.error && typeof app.utils.error.send === 'function') {
+                        app.utils.error.send(err, req, res);
+                    } else {
+                        res.status(400).json({ error: err });
+                    }
+                } else {
+                    res.status(200).json(user);
+                }
+            })
+        });
+        
 };
